@@ -12,7 +12,7 @@ def download_audio_and_metadata(url: str, output_dir: str, video_id: str):
 
     print(f"Starting download for URL: {url} to {output_dir}")
     ydl_opts = {
-        'format': 'bestaudio/best',
+        'format': 'best', # CHANGED: Use 'best' (video+audio) to avoid "format not available" errors with bestaudio
         'outtmpl': f'{output_dir}/{video_id}.%(ext)s',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
