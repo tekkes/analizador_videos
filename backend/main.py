@@ -64,8 +64,20 @@ def save_history(history):
 history_log = load_history()
 
 # Startup Event: Write Cookies
-@app.on_event("startup")
-async def startup_event():
+# Helper: Write Cookies at Import Time (Best for Docker/Render)
+cookies_content = os.getenv("YOUTUBE_COOKIES")
+if cookies_content:
+    cookies_path = "cookies.txt"
+    try:
+        print(f"DEBUG: Found YOUTUBE_COOKIES env var (Length: {len(cookies_content)})")
+        with open(cookies_path, "w") as f:
+            f.write(cookies_content)
+        print(f"DEBUG: Successfully wrote cookies to {cookies_path}")
+    except Exception as e:
+        print(f"DEBUG: Error writing cookies: {e}")
+else:
+    print("DEBUG: YOUTUBE_COOKIES env var NOT found at module level.")
+
     cookies_content = os.getenv("YOUTUBE_COOKIES")
     if cookies_content:
         cookies_path = "cookies.txt"
