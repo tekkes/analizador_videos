@@ -1,77 +1,85 @@
 # YouTube Video Analysis Tool
 
-Este proyecto es una herramienta para analizar videos de YouTube, generando resúmenes, transcripciones y guías didácticas.
+Herramienta profesional para analizar videos de YouTube, generar resúmenes extensos, transcripciones y guías didácticas utilizando IA (Gemini).
 
-## Estructura del Proyecto
+## Características
 
-- `backend/`: Servidor API construido con FastAPI (Python).
-- `frontend/`: Interfaz de usuario construida con React y Vite (JavaScript).
-- `output/`: Directorio donde se guardan los archivos generados.
+- **Análisis de Video**: Extrae audio y metadatos de YouTube.
+- **Inteligencia Artificial**: Usa Google Gemini para generar resúmenes detallados y guías.
+- **Múltiples Formatos**: Exporta resultados en Markdown, PDF y más.
+- **Historial**: Guarda un registro de todos los análisis realizados.
+- **Interfaz Moderna**: Frontend en React con modo oscuro y diseño responsive.
 
 ## Requisitos Previos
 
-Asegúrate de tener instalados:
 - [Python](https://www.python.org/downloads/) (3.8 o superior)
-- [Node.js](https://nodejs.org/) (versión LTS recomendada)
-- [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/) (v16 o superior)
+- [FFmpeg](https://ffmpeg.org/download.html) (Debe estar instalado y en el PATH del sistema)
+- Una [API Key de Google Gemini](https://aistudio.google.com/app/apikey)
 
-## Instrucciones de Instalación y Ejecución
+## Instalación Paso a Paso
 
-### 1. Configuración del Backend
+### 1. Clonar el Repositorio
 
-1.  Abre una terminal y navega a la carpeta `backend`:
-    ```bash
-    cd backend
+```bash
+git clone https://github.com/tekkes/analizador_videos.git
+cd analizador_videos
+```
+
+### 2. Configurar el Backend (Python)
+
+```bash
+cd backend
+# (Opcional) Crear entorno virtual
+python -m venv venv
+.\venv\Scripts\activate  # En Windows
+# source venv/bin/activate # En Mac/Linux
+
+# Instalar dependencias
+pip install -r requirements.txt
+```
+
+**Configuración de Variables de Entorno:**
+1.  En la carpeta `backend`, crea un archivo llamado `.env`.
+2.  Añade tu API Key de Google:
+    ```env
+    GOOGLE_API_KEY=tu_clave_de_api_aqui
     ```
 
-2.  (Opcional pero recomendado) Crea y activa un entorno virtual:
-    ```bash
-    python -m venv venv
-    # En Windows:
-    .\venv\Scripts\activate
-    # En macOS/Linux:
-    source venv/bin/activate
-    ```
+### 3. Configurar el Frontend (React)
 
-3.  Instala las dependencias:
-    ```bash
-    pip install -r requirements.txt
-    ```
+Abrir una nueva terminal en la carpeta principal del proyecto:
 
-4.  Configura las variables de entorno:
-    - Asegúrate de tener un archivo `.env` basado en `.env.example` si es necesario (especialmente para claves de API como Gemini).
+```bash
+cd frontend
+npm install
+```
 
-5.  Inicia el servidor:
-    ```bash
-    python main.py
-    ```
-    O alternativamente con uvicorn para recarga automática:
-    ```bash
-    uvicorn main:app --reload
-    ```
-    El backend correrá en `http://localhost:8000`.
+## Ejecución
 
-### 2. Configuración del Frontend
+### Opción A: Script Automático (Windows)
+Simplemente haz doble clic en el archivo `start_app.bat` en la carpeta raíz.
+Esto abrirá dos ventanas (Backend y Frontend) y te indicará la URL a usar.
 
-1.  Abre una nueva terminal y navega a la carpeta `frontend`:
-    ```bash
-    cd frontend
-    ```
+### Opción B: Ejecución Manual
 
-2.  Instala las dependencias de Node.js:
-    ```bash
-    npm install
-    ```
+**Backend:**
+```bash
+cd backend
+python main.py
+# Corre en http://localhost:8000
+```
 
-3.  Inicia el servidor de desarrollo:
-    ```bash
-    npm run dev
-    ```
-    El frontend estará disponible generalmente en `http://localhost:5173`.
+**Frontend:**
+```bash
+cd frontend
+npm run dev -- --host
+# Corre en http://localhost:5173 (o 5174, 5175...)
+```
 
 ## Uso
 
-1.  Abre el navegador en la URL del frontend (`http://localhost:5173`).
-2.  Ingresa una URL de un video de YouTube.
-3.  Selecciona las opciones de análisis deseadas (Resumen, Transcripción, Guía, etc.).
-4.  Haz clic en "Analizar".
+1.  Abre la URL que te muestra el frontend (ej. `http://localhost:5173`).
+2.  Pega el enlace de un video de YouTube.
+3.  Selecciona "Analizar".
+4.  Espera a que la IA procese el contenido y descarga los resultados.
