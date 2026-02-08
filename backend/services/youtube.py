@@ -36,27 +36,45 @@ def download_audio_and_metadata(url: str, output_dir: str, video_id: str):
     po_token = os.getenv("YOUTUBE_PO_TOKEN")
     if po_token:
         print("DEBUG: Using YOUTUBE_PO_TOKEN")
-        # Support for po_token is experimental in yt-dlp specific versions/extractors
-        # Trying to pass it via extracted_info or custom headers might be needed, 
-        # but modern yt-dlp might pick up if passed correctly.
-        # For now, we try passing it in 'extractor_args' if supported or just rely on cookies.
-        # Note: Direct support usually requires a specific extractor arg.
         ydl_opts['extractor_args'] = {'youtube': {'po_token': [po_token]}}
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=True)
-        filename = ydl.prepare_filename(info)
-        audio_filename = os.path.splitext(filename)[0] + ".mp3"
-        
-        # Ensure path is correct as yt-dlp might put it different places depending on config
-        # We forced outtmpl so it should be in output_dir
-        
-        return {
-            "title": info.get('title', 'Unknown Title'),
-            "upload_date": info.get('upload_date', 'Unknown Date'),
-            "thumbnail": info.get('thumbnail', ''),
-            "audio_path": audio_filename,
-            "description": info.get('description', ''),
-            "webpage_url": info.get('webpage_url', url),
-            "uploader": info.get('uploader', 'Unknown Author')
-        }
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=True)
+            filename = ydl.prepare_filename(info)
+            audio_filename = os.path.splitext(filename)[0] + ".mp3"
+            
+            return {
+                "title": info.get('title', 'Unknown Title'),
+                "upload_date": info.get('upload_date', 'Unknown Date'),
+                "thumbnail": info.get('thumbnail', ''),
+                "audio_path": audio_filename,
+                "description": info.get('description', ''),
+                "webpage_url": info.get('webpage_url', url),
+                "uploader": info.get('uploader', 'Unknown Author')
+            }
+            
+    except yt_dlp.utils.DownloadError as e:
+        error_str = str(e)
+        if "Requested format is not available" in error_str:
+            print(f"WARNING: Preferred format not found. Retrying with 'best' format. Error: {e}")
+            # Fallback: Try downloading 'best' (video+audio) and extract audio
+            ydl_opts['format'] = 'best'
+            
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=True)
+                filename = ydl.prepare_filename(info)
+                audio_filename = os.path.splitext(filename)[0] + ".mp3"
+                
+                return {
+                    "title": info.get('title', 'Unknown Title'),
+                    "upload_date": info.get('upload_date', 'Unknown Date'),
+                    "thumbnail": info.get('thumbnail', ''),
+                    "audio_path": audio_filename,
+                    "description": info.get('description', ''),
+                    "webpage_url": info.get('webpage_url', url),
+                    "uploader": info.get('uploader', 'Unknown Author')
+                }
+        else:
+            # Re-raise other errors (like Sign in)
+            raise e
