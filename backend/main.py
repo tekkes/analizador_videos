@@ -75,18 +75,18 @@ if not node_path:
 
 # Startup Event: Write Cookies
 # Helper: Write Cookies at Import Time (Best for Docker/Render)
-cookies_content = os.getenv("YOUTUBE_COOKIES")
-if cookies_content:
-    cookies_path = "cookies.txt"
-    try:
-        print(f"DEBUG: Found YOUTUBE_COOKIES env var (Length: {len(cookies_content)})")
-        with open(cookies_path, "w") as f:
-            f.write(cookies_content)
-        print(f"DEBUG: Successfully wrote cookies to {cookies_path} (Size: {os.path.getsize(cookies_path)})")
-    except Exception as e:
-        print(f"DEBUG: Error writing cookies: {e}")
-else:
-    print("DEBUG: YOUTUBE_COOKIES env var NOT found at module level.")
+# cookies_content = os.getenv("YOUTUBE_COOKIES")
+# if cookies_content:
+#     cookies_path = "cookies.txt"
+#     try:
+#         print(f"DEBUG: Found YOUTUBE_COOKIES env var (Length: {len(cookies_content)})")
+#         with open(cookies_path, "w") as f:
+#             f.write(cookies_content)
+#         print(f"DEBUG: Successfully wrote cookies to {cookies_path} (Size: {os.path.getsize(cookies_path)})")
+#     except Exception as e:
+#         print(f"DEBUG: Error writing cookies: {e}")
+# else:
+#     print("DEBUG: YOUTUBE_COOKIES env var NOT found at module level.")
 
 # Helper: PO Token (Experimental)
 po_token_content = os.getenv("YOUTUBE_PO_TOKEN")
@@ -103,9 +103,9 @@ if os.path.exists(SECRET_FILE_PATH):
     # OR just set COOKIES_FILE_PATH global to point there.
     # For now, let's copy it to be safe and consistent.
     try:
-        import shutil
-        shutil.copy(SECRET_FILE_PATH, "cookies.txt")
-        print(f"DEBUG: Copied Secret File to cookies.txt")
+        # import shutil
+        # shutil.copy(SECRET_FILE_PATH, "cookies.txt")
+        print(f"DEBUG: IGNORING Secret File to test clean Node.js bypass")
     except Exception as e:
         print(f"DEBUG: Error copying Secret File: {e}")
 
