@@ -22,6 +22,11 @@ def download_audio_and_metadata(url: str, output_dir: str, video_id: str):
         'quiet': True,
         'no_warnings': True,
     }
+    
+    # Check for cookies file
+    if os.path.exists("cookies.txt"):
+        print("Using cookies.txt for authentication")
+        ydl_opts['cookiefile'] = "cookies.txt"
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)

@@ -63,6 +63,17 @@ def save_history(history):
 # History storage
 history_log = load_history()
 
+# Startup Event: Write Cookies
+@app.on_event("startup")
+async def startup_event():
+    cookies_content = os.getenv("YOUTUBE_COOKIES")
+    if cookies_content:
+        cookies_path = "cookies.txt"
+        print(f"Writing cookies to {cookies_path}")
+        with open(cookies_path, "w") as f:
+            f.write(cookies_content)
+
+
 class AnalyzeRequest(BaseModel):
     url: str
     options: List[str]  # "summary", "transcription_orig", "transcription_es", "guide"
