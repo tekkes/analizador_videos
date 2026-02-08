@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/analizador_videos/', // Repository name for GitHub Pages
   plugins: [react()],
   server: {
     host: '0.0.0.0', // Listen on all addresses (including LAN)
