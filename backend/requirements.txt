@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+yt-dlp
+google-generativeai
+python-docx
+reportlab
+markdown2
+python-dotenv
+ebooklib
+beautifulsoup4
