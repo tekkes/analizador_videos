@@ -85,6 +85,21 @@ if po_token_content:
 else:
     print("DEBUG: YOUTUBE_PO_TOKEN env var NOT found.")
 
+# Helper: Render Secret File (Method 2 - More robust)
+SECRET_FILE_PATH = "/etc/secrets/cookies.txt"
+if os.path.exists(SECRET_FILE_PATH):
+    print(f"DEBUG: Found Render Secret File at {SECRET_FILE_PATH}")
+    # Symlink or copy to cookies.txt so yt-dlp finds it easily, 
+    # OR just set COOKIES_FILE_PATH global to point there.
+    # For now, let's copy it to be safe and consistent.
+    try:
+        import shutil
+        shutil.copy(SECRET_FILE_PATH, "cookies.txt")
+        print(f"DEBUG: Copied Secret File to cookies.txt")
+    except Exception as e:
+        print(f"DEBUG: Error copying Secret File: {e}")
+
+
     cookies_content = os.getenv("YOUTUBE_COOKIES")
     if cookies_content:
         cookies_path = "cookies.txt"
@@ -100,6 +115,10 @@ def debug_cookies():
     """Debug endpoint to check if cookies file exists and read first lines."""
     debug_info = {
         "cookies_file": {"exists": False, "size": 0, "content_snippet": "N/A"},
+        "secret_file": {
+            "exists": os.path.exists("/etc/secrets/cookies.txt"), 
+            "size": os.path.getsize("/etc/secrets/cookies.txt") if os.path.exists("/etc/secrets/cookies.txt") else 0
+        },
         "env_vars": {
             "YOUTUBE_COOKIES": "Present" if os.getenv("YOUTUBE_COOKIES") else "Missing",
             "YOUTUBE_PO_TOKEN": "Present" if os.getenv("YOUTUBE_PO_TOKEN") else "Missing"

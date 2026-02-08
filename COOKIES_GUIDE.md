@@ -25,4 +25,17 @@ YouTube bloquea a veces las descargas desde servidores en la nube (como Render).
 6.  Si el texto es muy largo, no te preocupes, pégalo entero.
 7.  Haz clic en **"Save Changes"**.
 
-Render reiniciará automáticamente tu servidor. Cuando termine, ¡las descargas deberían funcionar!
+## Método Alternativo (más fiable): "Secret Files"
+
+Si el método anterior falla (a veces el texto es demasiado largo para Render), usa este:
+
+1.  En tu Dashboard de Render, ve a la pestaña **"Environment"**.
+2.  Haz clic en **"Secret Files"** (debajo de Environment Variables).
+3.  Haz clic en **"Add Secret File"**.
+4.  Configura:
+    *   **Filename**: `cookies.txt`
+    *   **File Content**: *(Pega aquí todo el texto de tus cookies)*.
+5.  Haz clic en **"Save Changes"**.
+
+Esto guardará el archivo en `/etc/secrets/cookies.txt`, y mi código lo detectará automáticamente.
+
