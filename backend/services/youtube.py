@@ -10,6 +10,9 @@ def download_audio_and_metadata(url: str, output_dir: str, video_id: str):
         print("ERROR: FFmpeg not found in youtube.py check!")
         raise Exception("FFmpeg not found in system PATH.")
 
+    # FORCE NODE.JS VISIBILITY: Update PATH to include common locations
+    os.environ["PATH"] += os.pathsep + "/usr/local/bin" + os.pathsep + "/usr/bin"
+
     print(f"Starting download for URL: {url} to {output_dir}")
     ydl_opts = {
         'format': 'best', # CHANGED: Use 'best' (video+audio) to avoid "format not available" errors with bestaudio
@@ -24,13 +27,20 @@ def download_audio_and_metadata(url: str, output_dir: str, video_id: str):
         'verbose': True, # FORCE VERBOSE LOGGING
     }
     
-    # Check for cookies file
-    # Check for cookies file
+    # AGGRESSIVE COOKIE CLEANUP: Delete cookies.txt if it exists to force clean IP run
     if os.path.exists("cookies.txt"):
-        print(f"DEBUG: youtube.py found cookies.txt (Size: {os.path.getsize('cookies.txt')} bytes)")
-        ydl_opts['cookiefile'] = "cookies.txt"
-    else:
-        print("DEBUG: youtube.py did NOT find cookies.txt")
+        print(f"DEBUG: Found cookies.txt (Size: {os.path.getsize('cookies.txt')} bytes). DELETING IT to force clean run.")
+        try:
+            os.remove("cookies.txt")
+            print("DEBUG: cookies.txt deleted successfully.")
+        except Exception as e:
+            print(f"DEBUG: Error deleting cookies.txt: {e}")
+            
+    # if os.path.exists("cookies.txt"):
+    #     print(f"DEBUG: youtube.py found cookies.txt (Size: {os.path.getsize('cookies.txt')} bytes)")
+    #     ydl_opts['cookiefile'] = "cookies.txt"
+    # else:
+    print("DEBUG: youtube.py running WITHOUT cookies.txt (Clean Mode)")
 
     # Check for PO Token
     po_token = os.getenv("YOUTUBE_PO_TOKEN")

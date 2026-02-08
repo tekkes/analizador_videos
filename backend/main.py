@@ -67,9 +67,17 @@ history_log = load_history()
 
 # Verify Node.js for yt-dlp
 import shutil
+import subprocess
 node_path = shutil.which("node") or shutil.which("nodejs")
+print(f"DEBUG: PATH env var: {os.environ.get('PATH')}")
 print(f"DEBUG: Node.js check - Found at: {node_path}")
-if not node_path:
+if node_path:
+    try:
+        node_version = subprocess.check_output([node_path, "--version"], text=True).strip()
+        print(f"DEBUG: Node.js Version: {node_version}")
+    except Exception as e:
+        print(f"DEBUG: Could not get Node version: {e}")
+else:
     print("WARNING: Node.js NOT FOUND. yt-dlp may fail JS challenges!")
 
 

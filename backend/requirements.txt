@@ -8,3 +8,4 @@ markdown2
 python-dotenv
 ebooklib
 beautifulsoup4
+brotli
