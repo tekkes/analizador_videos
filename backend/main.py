@@ -65,6 +65,14 @@ def save_history(history):
 # History storage
 history_log = load_history()
 
+# Verify Node.js for yt-dlp
+import shutil
+node_path = shutil.which("node") or shutil.which("nodejs")
+print(f"DEBUG: Node.js check - Found at: {node_path}")
+if not node_path:
+    print("WARNING: Node.js NOT FOUND. yt-dlp may fail JS challenges!")
+
+
 # Startup Event: Write Cookies
 # Helper: Write Cookies at Import Time (Best for Docker/Render)
 cookies_content = os.getenv("YOUTUBE_COOKIES")

@@ -11,7 +11,11 @@ RUN apt-get update && apt-get install -y \
     git \
     nodejs \
     npm \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s /usr/bin/nodejs /usr/local/bin/node
+
+# Verify Node.js installation
+RUN node --version && npm --version
 
 # Copy the requirements file into the container at /app
 COPY requirements.txt .
