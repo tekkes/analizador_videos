@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
     && rm -rf /var/lib/apt/lists/* \
-    && ln -s /usr/bin/nodejs /usr/local/bin/node \
-    && ln -s /usr/bin/nodejs /usr/bin/node
+    && ln -sf /usr/bin/nodejs /usr/local/bin/node \
+    && ln -sf /usr/bin/nodejs /usr/bin/node
 
 # Verify Node.js installation
 RUN node --version && npm --version
