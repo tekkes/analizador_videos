@@ -72,11 +72,18 @@ if cookies_content:
         print(f"DEBUG: Found YOUTUBE_COOKIES env var (Length: {len(cookies_content)})")
         with open(cookies_path, "w") as f:
             f.write(cookies_content)
-        print(f"DEBUG: Successfully wrote cookies to {cookies_path}")
+        print(f"DEBUG: Successfully wrote cookies to {cookies_path} (Size: {os.path.getsize(cookies_path)})")
     except Exception as e:
         print(f"DEBUG: Error writing cookies: {e}")
 else:
     print("DEBUG: YOUTUBE_COOKIES env var NOT found at module level.")
+
+# Helper: PO Token (Experimental)
+po_token_content = os.getenv("YOUTUBE_PO_TOKEN")
+if po_token_content:
+    print(f"DEBUG: Found YOUTUBE_PO_TOKEN env var (Length: {len(po_token_content)})")
+else:
+    print("DEBUG: YOUTUBE_PO_TOKEN env var NOT found.")
 
     cookies_content = os.getenv("YOUTUBE_COOKIES")
     if cookies_content:
@@ -91,15 +98,28 @@ else:
 @app.get("/debug_cookies")
 def debug_cookies():
     """Debug endpoint to check if cookies file exists and read first lines."""
-    if os.path.exists("cookies.txt"):
-        with open("cookies.txt", "r") as f:
-            content = f.read(100) # Read first 100 chars
-        return {
-            "exists": True,
-            "size": os.path.getsize("cookies.txt"),
-            "content_snippet": content + "..." 
+    debug_info = {
+        "cookies_file": {"exists": False, "size": 0, "content_snippet": "N/A"},
+        "env_vars": {
+            "YOUTUBE_COOKIES": "Present" if os.getenv("YOUTUBE_COOKIES") else "Missing",
+            "YOUTUBE_PO_TOKEN": "Present" if os.getenv("YOUTUBE_PO_TOKEN") else "Missing"
         }
-    return {"exists": False, "message": "cookies.txt not found"}
+    }
+
+    if os.path.exists("cookies.txt"):
+        try:
+            size = os.path.getsize("cookies.txt")
+            with open("cookies.txt", "r") as f:
+                content = f.read(200) # Read first 200 chars to check format
+            debug_info["cookies_file"] = {
+                "exists": True,
+                "size": size,
+                "content_snippet": content 
+            }
+        except Exception as e:
+            debug_info["cookies_file"]["error"] = str(e)
+            
+    return debug_info
 
 
 class AnalyzeRequest(BaseModel):

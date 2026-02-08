@@ -19,8 +19,9 @@ def download_audio_and_metadata(url: str, output_dir: str, video_id: str):
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
-        'quiet': True,
-        'no_warnings': True,
+        'quiet': False, # Enable logs
+        'no_warnings': False, # Enable warnings
+        'verbose': True, # FORCE VERBOSE LOGGING
     }
     
     # Check for cookies file
@@ -30,6 +31,17 @@ def download_audio_and_metadata(url: str, output_dir: str, video_id: str):
         ydl_opts['cookiefile'] = "cookies.txt"
     else:
         print("DEBUG: youtube.py did NOT find cookies.txt")
+
+    # Check for PO Token
+    po_token = os.getenv("YOUTUBE_PO_TOKEN")
+    if po_token:
+        print("DEBUG: Using YOUTUBE_PO_TOKEN")
+        # Support for po_token is experimental in yt-dlp specific versions/extractors
+        # Trying to pass it via extracted_info or custom headers might be needed, 
+        # but modern yt-dlp might pick up if passed correctly.
+        # For now, we try passing it in 'extractor_args' if supported or just rely on cookies.
+        # Note: Direct support usually requires a specific extractor arg.
+        ydl_opts['extractor_args'] = {'youtube': {'po_token': [po_token]}}
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
