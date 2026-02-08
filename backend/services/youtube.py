@@ -97,6 +97,17 @@ def download_audio_and_metadata(url: str, output_dir: str, video_id: str):
                 }
         except Exception as retry_error:
             print(f"ERROR: Fallback download also failed: {retry_error}")
-            # Raise the ORIGINAL error as it's usually more descriptive, 
-            # unless the retry error is different.
+            
+            # FINAL DEBUG: List available formats to see what's actually there
+            try:
+                print("CRITICAL DEBUG: Attempting to list all available formats...")
+                with yt_dlp.YoutubeDL({'cookiefile': 'cookies.txt' if os.path.exists('cookies.txt') else None}) as ydl_debug:
+                    info_debug = ydl_debug.extract_info(url, download=False)
+                    formats = info_debug.get('formats', [])
+                    print(f"FOUND {len(formats)} FORMATS:")
+                    for f in formats:
+                        print(f" - ID: {f.get('format_id')} | Ext: {f.get('ext')} | Note: {f.get('format_note')}")
+            except Exception as debug_e:
+                print(f"CRITICAL DEBUG FAILED: {debug_e}")
+
             raise e
