@@ -1,6 +1,6 @@
 fastapi
 uvicorn
-yt-dlp>=2025.1.26
+yt-dlp @ https://github.com/yt-dlp/yt-dlp/archive/master.zip
 google-generativeai
 python-docx
 reportlab

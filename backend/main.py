@@ -25,11 +25,13 @@ app.add_middleware(
 def health_check():
     """Checks the health of the system (FFmpeg and API Key)."""
     ffmpeg_installed = shutil.which("ffmpeg") is not None
+    node_installed = shutil.which("node") is not None
     api_key_set = bool(os.getenv("GOOGLE_API_KEY"))
     
     status = {
         "status": "healthy" if ffmpeg_installed and api_key_set else "unhealthy",
         "ffmpeg": "installed" if ffmpeg_installed else "missing",
+        "node": "installed" if node_installed else "missing",
         "api_key": "set" if api_key_set else "missing"
     }
     return status
