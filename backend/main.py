@@ -69,9 +69,25 @@ async def startup_event():
     cookies_content = os.getenv("YOUTUBE_COOKIES")
     if cookies_content:
         cookies_path = "cookies.txt"
-        print(f"Writing cookies to {cookies_path}")
+        print(f"DEBUG: Found YOUTUBE_COOKIES env var (Length: {len(cookies_content)})")
         with open(cookies_path, "w") as f:
             f.write(cookies_content)
+        print(f"DEBUG: Successfully wrote cookies to {cookies_path}")
+    else:
+        print("DEBUG: YOUTUBE_COOKIES env var NOT found.")
+
+@app.get("/debug_cookies")
+def debug_cookies():
+    """Debug endpoint to check if cookies file exists and read first lines."""
+    if os.path.exists("cookies.txt"):
+        with open("cookies.txt", "r") as f:
+            content = f.read(100) # Read first 100 chars
+        return {
+            "exists": True,
+            "size": os.path.getsize("cookies.txt"),
+            "content_snippet": content + "..." 
+        }
+    return {"exists": False, "message": "cookies.txt not found"}
 
 
 class AnalyzeRequest(BaseModel):
