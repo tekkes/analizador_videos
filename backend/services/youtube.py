@@ -55,13 +55,33 @@ def download_audio_and_metadata(url: str, output_dir: str, video_id: str):
             }
             
     except yt_dlp.utils.DownloadError as e:
-        error_str = str(e)
-        if "Requested format is not available" in error_str:
-            print(f"WARNING: Preferred format not found. Retrying with 'best' format. Error: {e}")
-            # Fallback: Try downloading 'best' (video+audio) and extract audio
-            ydl_opts['format'] = 'best'
-            
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        print(f"WARNING: Download failed with primary options. Error: {e}")
+        print("WARNING: Retrying with fallback configuration (Format: best)...")
+        
+        # Fallback: Simple 'best' format (video+audio) and extract audio.
+        # Create a FRESH options dictionary to avoid any pollution
+        fallback_opts = {
+            'format': 'best', # Explicitly request 'best' which is usually available
+            'outtmpl': f'{output_dir}/{video_id}.%(ext)s',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+            'quiet': False,
+            'verbose': True,
+            'no_warnings': False,
+        }
+        
+        if os.path.exists("cookies.txt"):
+             fallback_opts['cookiefile'] = "cookies.txt"
+        
+        # Try PO token again if present
+        if po_token:
+             fallback_opts['extractor_args'] = {'youtube': {'po_token': [po_token]}}
+
+        try:
+            with yt_dlp.YoutubeDL(fallback_opts) as ydl:
                 info = ydl.extract_info(url, download=True)
                 filename = ydl.prepare_filename(info)
                 audio_filename = os.path.splitext(filename)[0] + ".mp3"
@@ -75,6 +95,8 @@ def download_audio_and_metadata(url: str, output_dir: str, video_id: str):
                     "webpage_url": info.get('webpage_url', url),
                     "uploader": info.get('uploader', 'Unknown Author')
                 }
-        else:
-            # Re-raise other errors (like Sign in)
+        except Exception as retry_error:
+            print(f"ERROR: Fallback download also failed: {retry_error}")
+            # Raise the ORIGINAL error as it's usually more descriptive, 
+            # unless the retry error is different.
             raise e
